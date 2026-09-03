@@ -30,6 +30,15 @@ export default function BloodDonatePage() {
     if (error) {
       setMessage('দুঃখিত, কিছু ভুল হয়েছে। আবার চেষ্টা করুন।');
     } else {
+      // ✅ সফল সাবমিশনের পর টেলিগ্রামে নোটিফিকেশন পাঠান
+      await fetch('/api/send-telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `<b>🩸 নতুন রক্তদাতার আবেদন!</b>\n\n<b>নাম:</b> ${formData.name}\n<b>রক্তের গ্রুপ:</b> ${formData.blood_group}\n<b>মোবাইল:</b> <a href="tel:+88${formData.mobile}">${formData.mobile}</a>\n<b>জেলা/এলাকা:</b> ${formData.district || 'N/A'}`
+        })
+      });
+
       setMessage('✅ আপনার রক্তদানের আবেদন সফলভাবে জমা হয়েছে! আমাদের টিম শীঘ্রই যোগাযোগ করবে।');
       setFormData({ name: '', mobile: '', blood_group: '', district: '', address: '' });
     }

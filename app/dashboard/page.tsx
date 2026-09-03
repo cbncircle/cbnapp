@@ -12,7 +12,7 @@ export default function DashboardPage() {
     total_donors: 0,
     pending_requests: 0,
     completed_donations: 0,
-    new_public_requests: 0, // নতুন ফিল্ড
+    new_public_requests: 0,
   });
   const router = useRouter();
 
@@ -31,12 +31,11 @@ export default function DashboardPage() {
 
         setRole(profile?.role || null);
 
-        // সব পরিসংখ্যান লোড
         const [donorsRes, requestsRes, donationsRes, publicRes] = await Promise.all([
           supabase.from('donors').select('*', { count: 'exact', head: true }),
           supabase.from('blood_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
           supabase.from('donations').select('*', { count: 'exact', head: true }),
-          supabase.from('public_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'), // পাবলিক রিকোয়েস্ট গণনা
+          supabase.from('public_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
         ]);
 
         setStats({
@@ -51,7 +50,7 @@ export default function DashboardPage() {
     });
   }, [router]);
 
-  // 🔴 রিয়েল-টাইম নোটিফিকেশন (পাবলিক রিকোয়েস্ট এলে সাথে সাথে সংখ্যা বাড়বে)
+  // Realtime নোটিফিকেশন (নতুন পাবলিক রিকোয়েস্ট এলে সাথে সাথে সংখ্যা বাড়বে)
   useEffect(() => {
     const channel = supabase
       .channel('public-requests-realtime')
@@ -108,8 +107,6 @@ export default function DashboardPage() {
             <h3 className="font-semibold text-green-600">সম্পন্ন</h3>
             <p className="text-2xl font-bold mt-2">{stats.completed_donations}</p>
           </div>
-
-          {/* নতুন পাবলিক রিকোয়েস্ট কার্ড */}
           <div className="bg-purple-50 p-4 rounded-lg">
             <h3 className="font-semibold text-purple-600">🆕 নতুন পাবলিক রিকোয়েস্ট</h3>
             <p className="text-2xl font-bold mt-2">{stats.new_public_requests}</p>
@@ -126,7 +123,7 @@ export default function DashboardPage() {
         )}
 
         {/* সাধারণ নেভিগেশন */}
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
           <a href="/dashboard/donors" className="bg-red-500 text-white p-4 rounded-lg text-center hover:bg-red-600">
             🩸 দাতা ম্যানেজমেন্ট
           </a>
@@ -138,6 +135,10 @@ export default function DashboardPage() {
           </a>
           <a href="/dashboard/leaderboard" className="bg-yellow-500 text-white p-4 rounded-lg text-center hover:bg-yellow-600">
             🏆 লিডারবোর্ড
+          </a>
+          {/* নতুন: রক্তদাতার আবেদন বাটন */}
+          <a href="/dashboard/donor-applications" className="bg-purple-500 text-white p-4 rounded-lg text-center hover:bg-purple-600">
+            🩸 রক্তদাতার আবেদন
           </a>
         </div>
       </div>

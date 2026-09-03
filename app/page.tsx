@@ -39,7 +39,7 @@ export default function Home() {
       {/* Navbar */}
       <header className="w-full max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          {/* লোগো (৪৮x৪৮ পিক্সেল ফিক্সড সাইজ) */}
+          {/* লোগো */}
           <div className="flex items-center justify-center rounded-full border-2 border-red-500 shadow-md bg-white" style={{ width: '48px', height: '48px', overflow: 'hidden' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
@@ -50,9 +50,16 @@ export default function Home() {
           </div>
           <span className="text-2xl font-extrabold text-red-700 tracking-wide">চৌরঙ্গী ব্লাড নেটওয়ার্ক</span>
         </div>
-        <Link href="/login" className="text-sm font-bold text-gray-800 hover:text-red-600 transition">
-          অ্যাডমিন লগইন
-        </Link>
+        
+        {/* নতুন লিংক + লগইন লিংক */}
+        <div className="flex items-center gap-4">
+          <Link href="/blood-donate" className="text-sm font-bold text-green-600 hover:text-green-800 transition">
+            🩸 রক্ত দিতে চাই
+          </Link>
+          <Link href="/login" className="text-sm font-bold text-gray-800 hover:text-red-600 transition">
+            অ্যাডমিন লগইন
+          </Link>
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -79,8 +86,8 @@ export default function Home() {
           <Link href="/blood-request" className="bg-red-600 text-white text-lg font-bold px-8 py-4 rounded-xl shadow-lg hover:bg-red-700 hover:scale-105 transform transition duration-300">
             📢 রক্তের অনুরোধ পাঠান
           </Link>
-          <Link href="/login" className="bg-white text-red-600 text-lg font-bold px-8 py-4 rounded-xl shadow-lg border-2 border-red-200 hover:bg-red-50 hover:scale-105 transform transition duration-300">
-            🔐 অ্যাডমিন লগইন
+          <Link href="/blood-donate" className="bg-green-600 text-white text-lg font-bold px-8 py-4 rounded-xl shadow-lg hover:bg-green-700 hover:scale-105 transform transition duration-300">
+            🩸 রক্ত দিতে চাই
           </Link>
         </div>
       </main>

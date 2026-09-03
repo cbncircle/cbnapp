@@ -7,6 +7,10 @@ export default function DonorApplicationsPage() {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // নতুন: ফিল্টার স্টেট
+  const [statusFilter, setStatusFilter] = useState('all'); // all, pending, approved, rejected
+  const [bloodGroupFilter, setBloodGroupFilter] = useState(''); // '' (সব) বা নির্দিষ্ট গ্রুপ
+
   const fetchApplications = async () => {
     const { data } = await supabase.from('donor_applications').select('*').order('created_at', { ascending: false });
     setApplications(data || []);
@@ -16,6 +20,13 @@ export default function DonorApplicationsPage() {
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  // ফিল্টার করা আবেদন তালিকা
+  const filteredApplications = applications.filter((app) => {
+    const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
+    const matchesBloodGroup = !bloodGroupFilter || app.blood_group === bloodGroupFilter;
+    return matchesStatus && matchesBloodGroup;
+  });
 
   const updateStatus = async (id: number, status: string) => {
     const { error } = await supabase.from('donor_applications').update({ status }).eq('id', id);
@@ -45,18 +56,61 @@ export default function DonorApplicationsPage() {
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending': return 'পেন্ডিং';
+      case 'approved': return 'অনুমোদিত';
+      case 'rejected': return 'বাতিল';
+      default: return status;
+    }
+  };
+
   if (loading) return <div className="p-6">লোড হচ্ছে...</div>;
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-red-600 mb-4">🩸 রক্তদাতার আবেদনসমূহ</h1>
 
+      {/* নতুন: ফিল্টার সেকশন */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          {/* স্ট্যাটাস ফিল্টার বাটন */}
+          <div className="flex gap-2">
+            {['all', 'pending', 'approved', 'rejected'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={`px-4 py-2 rounded text-sm font-semibold border ${
+                  statusFilter === status ? 'bg-red-500 text-white border-red-500' : 'bg-white text-gray-700 border-gray-300'
+                }`}
+              >
+                {status === 'all' ? 'সব' : status === 'pending' ? 'পেন্ডিং' : status === 'approved' ? 'অনুমোদিত' : 'বাতিল'}
+              </button>
+            ))}
+          </div>
+
+          {/* ব্লাড গ্রুপ ফিল্টার ড্রপডাউন */}
+          <select
+            value={bloodGroupFilter}
+            onChange={(e) => setBloodGroupFilter(e.target.value)}
+            className="border rounded px-3 py-2 text-sm font-medium bg-white"
+          >
+            <option value="">সব ব্লাড গ্রুপ</option>
+            {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(g => (
+              <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* ফিল্টার করা তালিকা */}
       <div className="bg-white rounded-lg shadow p-4">
-        {applications.length === 0 ? (
+        <h2 className="font-semibold text-lg mb-3">আবেদন তালিকা ({filteredApplications.length} টি)</h2>
+        {filteredApplications.length === 0 ? (
           <p className="text-gray-500 text-center">কোনো আবেদন নেই।</p>
         ) : (
           <div className="space-y-3">
-            {applications.map((app) => (
+            {filteredApplications.map((app) => (
               <div key={app.id} className="border p-3 rounded bg-gray-50">
                 <div className="flex justify-between items-start">
                   <div>
@@ -64,7 +118,7 @@ export default function DonorApplicationsPage() {
                     <p className="text-sm text-gray-600">📞 {app.mobile} | 📍 {app.district || 'N/A'}</p>
                   </div>
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(app.status)}`}>
-                    {app.status === 'pending' ? 'পেন্ডিং' : app.status === 'approved' ? 'অনুমোদিত' : 'বাতিল'}
+                    {getStatusLabel(app.status)}
                   </span>
                 </div>
 

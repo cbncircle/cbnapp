@@ -338,7 +338,7 @@ export default function Home() {
 
             <div className="contact-grid">
               <a
-                href="tel:+8801700000000"
+                href="tel:+8801723654265"
                 className="contact-card call"
               >
                 <span className="contact-icon">📞</span>
@@ -346,7 +346,7 @@ export default function Home() {
               </a>
 
               <a
-                href="https://wa.me/8801700000000"
+                href="https://wa.me/+8801723654265"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-card whatsapp"
@@ -356,7 +356,7 @@ export default function Home() {
               </a>
 
               <a
-                href="mailto:info@cbn.com"
+                href="mailto: cbncircle@gmail.com"
                 className="contact-card email"
               >
                 <span className="contact-icon">✉️</span>
